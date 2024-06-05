@@ -1,6 +1,6 @@
 name: 'Check Comments'
 description: 'Analyze and handle comments in issues, pull requests, and discussions'
-author: 'CobosDS'
+author: 'Your Name'
 inputs:
   github_token:
     description: 'GitHub token'
@@ -18,6 +18,7 @@ runs:
         fetch-depth: 0
 
     - name: Create data directory
+      shell: bash
       run: mkdir -p data
 
     - name: Save comment details to JSON file
@@ -76,12 +77,14 @@ runs:
         cat data/comment.json
 
     - name: Send comment to local server for analysis
+      shell: bash
       run: |
         curl -X POST "${{ inputs.server_url }}" -H "Content-Type: application/json" \
              -d @data/comment.json \
              -o data/comment_analysis_result.json
 
     - name: Display result JSON
+      shell: bash
       run: cat data/comment_analysis_result.json
 
     - name: Set action based on flags
@@ -119,7 +122,7 @@ runs:
                https://api.github.com/repos/${{ github.repository }}/discussions/${{ github.event.discussion.id }}/comments \
                -d '{"body":"'"$COMMENT_BODY"'"}'
         fi
-
+        
     - name: Delete comment
       if: ${{ env.comment_to_delete }} == 'true'
       shell: bash
